@@ -54,17 +54,17 @@ type NameDetails struct {
 
 type ExtraTags struct {
 	// See http://wiki.openstreetmap.org/wiki/Annotations
-	Attribution string `json:"attribution,omitempy"`
-	Comment     string `json:"comment,omitempy"`
-	Description string `json:"description,omitempy"`
-	Email       string `json:"email,omitempy"`
-	Fax         string `json:"fax,omitempy"`
-	Image       string `json:"image,omitempy"`
-	Note        string `json:"note,omitempy"`
+	Attribution string `json:"attribution,omitempty"`
+	Comment     string `json:"comment,omitempty"`
+	Description string `json:"description,omitempty"`
+	Email       string `json:"email,omitempty"`
+	Fax         string `json:"fax,omitempty"`
+	Image       string `json:"image,omitempty"`
+	Note        string `json:"note,omitempty"`
 	Phone       string `json:"phone,omitempty"`
-	Source      string `json:"source,omitempy"`
-	SourceName  string `json:"source:name,omitempy"`
-	SourceRef   string `json:"source:ref,omitempy"`
+	Source      string `json:"source,omitempty"`
+	SourceName  string `json:"source:name,omitempty"`
+	SourceRef   string `json:"source:ref,omitempty"`
 	Todo        string `json:"todo,omitempty"`
 	Website     string `json:"website,omitempty"`
 	Wikipedia   string `json:"wikipedia,omitempty"`
