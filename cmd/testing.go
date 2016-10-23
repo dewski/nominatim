@@ -21,4 +21,13 @@ func main() {
 	}
 
 	fmt.Printf("%+v", resp)
+
+	options.OsmIds = []string{resp.OsmParam()}
+
+	results, err := nominatim.Lookup(options)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v", results)
 }

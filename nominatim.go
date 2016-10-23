@@ -2,8 +2,10 @@ package nominatim
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 type Result struct {
@@ -11,6 +13,9 @@ type Result struct {
 	License     string      `json:"license,omitempty"`
 	OsmType     string      `json:"osm_type,omitempty"`
 	OsmID       string      `json:"osm_id,omitempty"`
+	Class       string      `json:"string,omitempty"`
+	Type        string      `json:"type,omitempty"`
+	Importance  string      `json:"importance,omitempty"`
 	Lat         string      `json:"lat,omitempty"`
 	Lon         string      `json:"lon,omitempty"`
 	DisplayName string      `json:"display_name,omitempty"`
@@ -21,19 +26,25 @@ type Result struct {
 }
 
 type Address struct {
-	Village     string `json:"village,omitempty,omitempty"`
-	Town        string `json:"town,omitempty"`
-	Supermarket string `json:"supermarket,omitempty"`
+	Village       string `json:"village,omitempty"`
+	HouseNumber   string `json:"house_number,omitempty"`
+	Road          string `json:"road,omitempty"`
+	Residential   string `json:"residential,omitempty"`
+	Town          string `json:"town,omitempty"`
+	City          string `json:"city,omitempty"`
+	County        string `json:"county,omitempty"`
+	State         string `json:"state,omitempty"`
+	PostCode      string `json:"postcode,omitempty"`
+	Country       string `json:"country,omitempty"`
+	CountryCode   string `json:"country_code,omitempty"`
+	StateDistrict string `json:"state_district,omitempty"`
+
+	Pedestrian  string `json:"pedestrian,omitempty"`
+	Attraction  string `json:"attraction,omitempty"`
 	Building    string `json:"building,omitempty"`
-	HouseNumber string `json:"house_number,omitempty"`
-	Road        string `json:"road,omitempty"`
-	Residential string `json:"residential,omitempty"`
-	City        string `json:"city,omitempty"`
-	County      string `json:"county,omitempty"`
-	State       string `json:"state,omitempty"`
-	Postcode    string `json:"postcode,omitempty"`
-	Country     string `json:"country,omitempty"`
-	CountryCode string `json:"country_code,omitempty"`
+	Supermarket string `json:"supermarket,omitempty"`
+	Fuel        string `json:"fuel,omitempty"`
+	BusStop     string `json:"bus_stop,omitempty"`
 }
 
 type NameDetails struct {
@@ -42,9 +53,25 @@ type NameDetails struct {
 }
 
 type ExtraTags struct {
-	Phone        string `json:"phone,omitempty"`
-	Website      string `json:"website,omitempty"`
+	// See http://wiki.openstreetmap.org/wiki/Annotations
+	Attribution string `json:"attribution,omitempy"`
+	Comment     string `json:"comment,omitempy"`
+	Description string `json:"description,omitempy"`
+	Email       string `json:"email,omitempy"`
+	Fax         string `json:"fax,omitempy"`
+	Image       string `json:"image,omitempy"`
+	Note        string `json:"note,omitempy"`
+	Phone       string `json:"phone,omitempty"`
+	Source      string `json:"source,omitempy"`
+	SourceName  string `json:"source:name,omitempy"`
+	SourceRef   string `json:"source:ref,omitempy"`
+	Todo        string `json:"todo,omitempty"`
+	Website     string `json:"website,omitempty"`
+	Wikipedia   string `json:"wikipedia,omitempty"`
+
+	// See http://wiki.openstreetmap.org/wiki/Map_Features#Properties
 	OpeningHours string `json:"opening_hours,omitempty"`
+	Fee          string `json:"fee,omitempty"`
 }
 
 type Options struct {
@@ -53,11 +80,14 @@ type Options struct {
 	Zoom           int
 	AddressDetails bool
 	ExtraTags      bool
+	OsmIds         []string
 }
 
 var (
-	email     = ""
-	urlFormat = "https://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=%d&addressdetails=%d&extratags=%d&email=%s"
+	ErrMissingLookupOsmIds  = errors.New("Missing OSM ids")
+	email                   = ""
+	reverseGeocodeUrlFormat = "https://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=%d&addressdetails=%d&extratags=%d&email=%s"
+	lookupUrlFormat         = "https://nominatim.openstreetmap.org/lookup?osm_ids=%s&format=json&addressdetails=%d&extratags=%d&email=%s"
 )
 
 func SetEmail(e string) {
@@ -65,17 +95,18 @@ func SetEmail(e string) {
 }
 
 func ReverseGeocode(options Options) (result Result, err error) {
-	details := 0
-	if options.AddressDetails {
-		details = 1
-	}
+	_, details, extraTags := options.parse()
 
-	extraTags := 0
-	if options.ExtraTags {
-		extraTags = 1
-	}
+	url := fmt.Sprintf(
+		reverseGeocodeUrlFormat,
+		options.Lat,
+		options.Lon,
+		options.Zoom,
+		details,
+		extraTags,
+		email,
+	)
 
-	url := fmt.Sprintf(urlFormat, options.Lat, options.Lon, options.Zoom, details, extraTags, email)
 	resp, err := http.Get(url)
 	if err != nil {
 		return result, err
@@ -87,4 +118,66 @@ func ReverseGeocode(options Options) (result Result, err error) {
 	}
 
 	return result, nil
+}
+
+func (r Result) OsmParam() (nodeID string) {
+	switch r.OsmType {
+	case "node":
+		nodeID = fmt.Sprintf("N%s", r.OsmID)
+	case "relation":
+		nodeID = fmt.Sprintf("R%s", r.OsmID)
+	case "way":
+		nodeID = fmt.Sprintf("W%s", r.OsmID)
+	default:
+		panic("Unknown OSM Type")
+	}
+
+	return
+}
+
+func Lookup(options Options) (results []Result, err error) {
+	osmList, details, extraTags := options.parse()
+
+	if osmList == "" {
+		err = ErrMissingLookupOsmIds
+		return
+	}
+
+	url := fmt.Sprintf(
+		lookupUrlFormat,
+		osmList,
+		details,
+		extraTags,
+		email,
+	)
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+
+	if err = json.NewDecoder(resp.Body).Decode(&results); err != nil {
+		return
+	}
+
+	return
+}
+
+func (o Options) parse() (osmList string, details, extraTags int) {
+	details, extraTags = 0, 0
+
+	if o.AddressDetails {
+		details = 1
+	}
+
+	if o.ExtraTags {
+		extraTags = 1
+	}
+
+	if len(o.OsmIds) > 0 {
+		osmList = strings.Join(o.OsmIds, ",")
+	}
+
+	return
 }
