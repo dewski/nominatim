@@ -76,7 +76,6 @@ func ReverseGeocode(options Options) (result Result, err error) {
 	}
 
 	url := fmt.Sprintf(urlFormat, options.Lat, options.Lon, options.Zoom, details, extraTags, email)
-	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return result, err
