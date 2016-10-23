@@ -57,7 +57,7 @@ type Options struct {
 
 var (
 	email     = ""
-	urlFormat = "http://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=%d&addressdetails=%d&extratags=%d&email=%s"
+	urlFormat = "https://nominatim.openstreetmap.org/reverse?format=json&lat=%f&lon=%f&zoom=%d&addressdetails=%d&extratags=%d&email=%s"
 )
 
 func SetEmail(e string) {
