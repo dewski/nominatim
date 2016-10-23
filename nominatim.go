@@ -7,44 +7,44 @@ import (
 )
 
 type Result struct {
-	PlaceID     string      `json:"place_id"`
-	License     string      `json:"license"`
-	OsmType     string      `json:"osm_type"`
-	OsmID       string      `json:"osm_id"`
-	Lat         string      `json:"lat"`
-	Lon         string      `json:"lon"`
-	DisplayName string      `json:"display_name"`
-	Address     Address     `json:"address"`
-	NameDetails NameDetails `json:"namedetails"`
-	ExtraTags   ExtraTags   `json:"extratags"`
-	BoundingBox []string    `json:"boundingbox"`
+	PlaceID     string      `json:"place_id,omitempty"`
+	License     string      `json:"license,omitempty"`
+	OsmType     string      `json:"osm_type,omitempty"`
+	OsmID       string      `json:"osm_id,omitempty"`
+	Lat         string      `json:"lat,omitempty"`
+	Lon         string      `json:"lon,omitempty"`
+	DisplayName string      `json:"display_name,omitempty"`
+	Address     Address     `json:"address,omitempty"`
+	NameDetails NameDetails `json:"namedetails,omitempty"`
+	ExtraTags   ExtraTags   `json:"extratags,omitempty"`
+	BoundingBox []string    `json:"boundingbox,omitempty"`
 }
 
 type Address struct {
-	Village     string `json:"village"`
-	Town        string `json:"town"`
-	Supermarket string `json:"supermarket"`
-	Building    string `json:"building"`
-	HouseNumber string `json:"house_number"`
-	Road        string `json:"road"`
-	Residential string `json:"residential"`
-	City        string `json:"city"`
-	County      string `json:"county"`
-	State       string `json:"state"`
-	Postcode    string `json:"postcode"`
-	Country     string `json:"country"`
-	CountryCode string `json:"country_code"`
+	Village     string `json:"village,omitempty,omitempty"`
+	Town        string `json:"town,omitempty"`
+	Supermarket string `json:"supermarket,omitempty"`
+	Building    string `json:"building,omitempty"`
+	HouseNumber string `json:"house_number,omitempty"`
+	Road        string `json:"road,omitempty"`
+	Residential string `json:"residential,omitempty"`
+	City        string `json:"city,omitempty"`
+	County      string `json:"county,omitempty"`
+	State       string `json:"state,omitempty"`
+	Postcode    string `json:"postcode,omitempty"`
+	Country     string `json:"country,omitempty"`
+	CountryCode string `json:"country_code,omitempty"`
 }
 
 type NameDetails struct {
-	Name      string `json:"name"`
-	HouseName string `json:"addr:housename"`
+	Name      string `json:"name,omitempty"`
+	HouseName string `json:"addr:housename,omitempty"`
 }
 
 type ExtraTags struct {
-	Phone        string `json:"phone"`
-	Website      string `json:"website"`
-	OpeningHours string `json:"opening_hours"`
+	Phone        string `json:"phone,omitempty"`
+	Website      string `json:"website,omitempty"`
+	OpeningHours string `json:"opening_hours,omitempty"`
 }
 
 type Options struct {
