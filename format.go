@@ -109,6 +109,46 @@ func (a Address) Short() (short string) {
 			a.Road,
 			a.City,
 		)
+	case a.Restaurant != "":
+		short = fmt.Sprintf(
+			shortAttractionFormat,
+			a.Restaurant,
+			a.HouseNumber,
+			a.Road,
+			a.City,
+		)
+	case a.FastFood != "":
+		short = fmt.Sprintf(
+			shortAttractionFormat,
+			a.FastFood,
+			a.HouseNumber,
+			a.Road,
+			a.City,
+		)
+	case a.Parking != "":
+		short = fmt.Sprintf(
+			shortAttractionFormat,
+			a.FastFood,
+			a.HouseNumber,
+			a.Road,
+			a.City,
+		)
+	case a.Car != "":
+		short = fmt.Sprintf(
+			shortAttractionFormat,
+			a.Car,
+			a.HouseNumber,
+			a.Road,
+			a.City,
+		)
+	case a.Chemist != "":
+		short = fmt.Sprintf(
+			shortAttractionFormat,
+			a.Chemist,
+			a.HouseNumber,
+			a.Road,
+			a.City,
+		)
 	case a.Building != "":
 		short = fmt.Sprintf(
 			shortAttractionFormat,

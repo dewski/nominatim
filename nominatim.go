@@ -40,11 +40,16 @@ type Address struct {
 	StateDistrict string `json:"state_district,omitempty"`
 
 	Pedestrian  string `json:"pedestrian,omitempty"`
+	Chemist     string `json:"chemist,omitempty"`
+	Restaurant  string `json:"restaurant,omitempty"`
+	FastFood    string `json:"fast_food,omitempty"`
 	Attraction  string `json:"attraction,omitempty"`
 	Building    string `json:"building,omitempty"`
 	Supermarket string `json:"supermarket,omitempty"`
 	Fuel        string `json:"fuel,omitempty"`
+	Parking     string `json:"parking,omitempty"`
 	BusStop     string `json:"bus_stop,omitempty"`
+	Car         string `json:"car,omitempty"`
 }
 
 type NameDetails struct {
@@ -72,6 +77,7 @@ type ExtraTags struct {
 	// See http://wiki.openstreetmap.org/wiki/Map_Features#Properties
 	OpeningHours string `json:"opening_hours,omitempty"`
 	Fee          string `json:"fee,omitempty"`
+	Cuisine      string `json:"cuisine,omitempty"`
 }
 
 type Options struct {
